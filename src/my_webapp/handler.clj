@@ -3,7 +3,8 @@
             [compojure.route :as route]
             [my-webapp.views :as views]
             [ring.adapter.jetty :as jetty]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
+            [ring.middleware.defaults :refer [wrap-defaults site-defaults]])
+  (:gen-class))
 
 
 (defroutes app-routes
@@ -31,8 +32,15 @@
   (wrap-defaults #'app-routes site-defaults))
 
 
-(defn -main []
-  (jetty/run-jetty #'app {:port 3000}))
+(defn -main [& [port]]
+  ;; command-line arguments and environment variables are always
+  ;; strings so we need to call parse-long on the result; which
+  ;; means that if neither are specified and we provide the default,
+  ;; then it has to be a string as well:
+  (let [port (parse-long (or port
+                             (System/getenv "PORT")
+                             "3000"))]
+    (jetty/run-jetty #'app {:port port})))
 
 
 (comment

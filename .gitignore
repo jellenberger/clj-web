@@ -1,4 +1,6 @@
 *.db
+target/
+
 .calva/
 .clj-kondo/
 .cpcache/
